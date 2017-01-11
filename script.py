@@ -32,17 +32,18 @@ print("len(train), len(test) = ({}, {})".format(len(train), len(test)))
 # convert an array of values into a dataset matrix
 def create_dataset(dataset, look_back=1):
     dataX, dataY = [], []
-    for i in range(len(dataset) - look_back):  # Error tuto : removed "-1"
-        a = dataset[i:(i + look_back), 0]
-        dataX.append(a)
+    for i in range(len(dataset) - look_back - 1):  # Error tuto ? "-1" can
+        a = dataset[i:(i + look_back), 0]          # be removed, but then error
+        dataX.append(a)                            # before ploting
         dataY.append(dataset[i + look_back, 0])
-    return numpy.array(dataX), numpy.array(dataY)
+    return numpy.array(dataX), numpy.array(dataY)  # dataX (n,1) ; dataY (n,)
 
 
 # reshape into X=t and Y=t+1
 look_back = 1
 trainX, trainY = create_dataset(train, look_back)
 testX, testY = create_dataset(test, look_back)
+
 
 # reshape input to be [samples, time steps, features]
 trainX = numpy.reshape(trainX, (trainX.shape[0], 1, trainX.shape[1]))
@@ -55,7 +56,7 @@ model.add(LSTM(4, input_dim=look_back))
 model.add(Dense(1))
 model.compile(loss='mean_squared_error', optimizer='adam')
 model.fit(trainX, trainY, nb_epoch=100, batch_size=1, verbose=2)
-'''
+
 # make predictions
 trainPredict = model.predict(trainX)
 testPredict = model.predict(testX)
@@ -86,4 +87,3 @@ plt.plot(scaler.inverse_transform(dataset))
 plt.plot(trainPredictPlot)
 plt.plot(testPredictPlot)
 plt.show()
-'''
